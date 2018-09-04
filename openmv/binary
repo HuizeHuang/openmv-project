@@ -1,0 +1,18 @@
+# Untitled - By: 黄惠泽 - 周三 6月 6 2018
+
+import sensor, image, time
+
+sensor.reset()
+sensor.set_pixformat(sensor.RGB565)
+sensor.set_framesize(sensor.QVGA)
+sensor.skip_frames(time = 2000)
+
+
+clock = time.clock()
+THRESHOLD = (21,28,2,25,-24,31)
+
+while(True):
+    clock.tick()
+    img = sensor.snapshot()
+    img=img.binary([THRESHOLD])
+    print(clock.fps())

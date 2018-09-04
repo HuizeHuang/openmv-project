@@ -1,0 +1,48 @@
+# Untitled - By: 黄惠泽 - 周五 5月 18 2018
+
+# Blob Detection Example
+#
+# This example shows off how to use the find_blobs function to find color
+# blobs in the image. This example in particular looks for dark green objects.
+
+import sensor, image, time
+
+# For color tracking to work really well you should ideally be in a very, very,
+# very, controlled enviroment where the lighting is constant...
+red_threshold_01 = (25, 100, 26, 127, -42, 127)
+
+#设置红色的阈值，括号里面的数值分别是L A B 的最大值和最小值（minL, maxL, minA,
+# maxA, minB, maxB），LAB的值在图像左侧三个坐标图中选取。如果是灰度图，则只需
+#设置（min, max）两个数字即可。
+
+# You may need to tweak the above settings for tracking green things...
+# Select an area in the Framebuffer to copy the color settings.
+
+sensor.reset() # Initialize the camera sensor.
+sensor.set_pixformat(sensor.RGB565) # use RGB565.
+sensor.set_framesize(sensor.QQVGA) # use QQVGA for speed.
+sensor.skip_frames(10) # Let new settings take affect.
+sensor.set_auto_whitebal(False)
+#关闭白平衡。白平衡是默认开启的，在颜色识别中，需要关闭白平衡。
+clock = time.clock() # Tracks FPS.
+
+while(True):
+    clock.tick() # Track elapsed milliseconds between snapshots().
+    img = sensor.snapshot() # Take a picture and return the image.
+    #  pixels_threshold=100, area_threshold=100
+    blobs = img.find_blobs([red_threshold_01], area_threshold=150)
+
+    if blobs:
+    #如果找到了目标颜色
+        print(blobs)
+        for b in blobs:
+        #迭代找到的目标颜色区域
+            # Draw a rect around the blob.
+            img.draw_rectangle(b[0:4]) # rect
+            #用矩形标记出目标颜色区域
+            img.draw_cross(b[5], b[6]) # cx, cy
+            #在目标颜色区域的中心画十字形标记
+
+
+    print(clock.fps()) # Note: Your OpenMV Cam runs about half as fast while
+    # connected to your computer. The FPS should increase once disconnected.
